@@ -1,0 +1,17 @@
+pipeline:
+  build-image:
+    image: plugins/docker
+    secrets:
+      - source: global_quay_username
+        target: docker_username
+      - source: global_quay_password
+        target: docker_password
+    registry: quay.io
+    repo: quay.io/postmates/k8s-snapshots
+    tags:
+      - ${DRONE_BRANCH/\//-} # replace '/' with '-' to meet image tag rules
+      - v${DRONE_COMMIT_SHA:0:7} # prepend v to commit id to avoid yaml "looks like a number" issues
+    when:
+      event:
+        - push
+        - pull_request
